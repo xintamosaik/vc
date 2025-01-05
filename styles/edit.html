@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/styles/edit</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>/styles/edit</h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="id" id="id">
+            <nav id="sections" class="auto-rows">
+
+
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Name">
+                <br>
+
+                <div class="section" data-category="layout">
+                    <input type="checkbox" id="layout" name="layout" value="layout" checked>
+                    <a data-section="layout" href="/styles/layout/edit.html">/styles/layout</a>
+                </div>
+
+                <div class="section" data-category="fonts">
+                    <input type="checkbox" id="fonts" name="fonts" value="fonts" checked>
+                    <a data-section="fonts" href="/styles/fonts/edit.html">/styles/fonts</a>
+                </div>
+
+                <div class="section" data-category="colors">
+                    <input type="checkbox" id="colors" name="colors" value="colors" checked>
+                    <a data-section="colors" href="/styles/colors.html">/styles/colors</a>
+                </div>
+
+                <div class="section" data-category="spacing">
+                    <input type="checkbox" id="spacing" name="spacing" value="spacing" checked>
+                    <a data-section="spacing" href="/styles/spacing.html">/styles/spacing</a>
+                </div>
+
+                <div class="section" data-category="borders">
+                    <input type="checkbox" id="borders" name="borders" value="borders" checked>
+                    <a data-section="borders" href="/styles/borders.html">/styles/borders</a>
+                </div>
+
+            </nav>
+            <button type="submit">Enter</button>
+        </form>
+        <script>
+            const sections = document.querySelectorAll('nav#sections .section')
+            function getDefaults() {
+                return status = JSON.parse(localStorage.getItem('styles')) ?? {
+                    layout: true,
+                    fonts: true,
+                    colors: true,
+                    spacing: true,
+                    borders: true
+                }
+            }
+
+            function createNew() {
+                const style = {}
+
+                const defaults = getDefaults()
+                const timestamp = new Date().getTime()
+                style.created = timestamp;
+                style.updated = timestamp;
+
+                console.log(sections)
+                sections.forEach(section => {
+                    const category = section.dataset.category
+                    console.log(category)
+                    style[category] = {
+                        active: defaults[category] ?? true
+                    }
+                    console.log(style[category])
+                })
+                const id = 'style_' + timestamp
+                localStorage.setItem(id, JSON.stringify(style))
+                return id
+            }
+
+            (function handleLoad() { // this or the other one is really buggy
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get('id')
+
+                if (!id) {
+                    window.location.replace(window.location.href + '?id=' + createNew())
+                }
+
+                const form = document.forms[0]
+                const formElements = form.elements
+                formElements.id.value = id
+
+                window.sections.querySelectorAll('input + a').forEach(link => {
+                    const category = link.dataset.section
+                    link.href += '?id=' + formElements.id.value
+                })
+
+                const data = JSON.parse(localStorage.getItem(formElements.id.value))
+                console.log(data)
+
+                const sections = document.querySelectorAll('nav#sections .section')
+                sections.forEach(section => {
+                    console.log(section)
+                    const category = section.dataset.category
+                    console.log(category)
+                    if (!data.hasOwnProperty(category)) {
+                        console.log('nope')
+                        return
+
+                    }
+                    section.querySelector('input').checked = data[category].active
+                })
+
+                formElements.name.value = data.name ?? ''
+
+            })()
+
+
+
+            function updatestyle() {
+                const formElements = document.forms[0].elements
+                const id = formElements.id.value
+                const data = JSON.parse(localStorage.getItem(id))
+
+                data.updated = new Date().getTime()
+                data.name = formElements.name.value
+                sections.forEach(section => {
+                    data[section.dataset.category].active = section.querySelector('input').checked
+                })
+
+                localStorage.setItem(id, JSON.stringify(data))
+
+                flashSuccessMessage('Data saved!')
+            }
+
+            function handleSubmit(event) { // this or the other one is really buggy
+
+                event.preventDefault();
+                updatestyle()
+
+            }
+        </script>
+        <br>
+        <nav class="auto-rows">
+            <a href="/styles/">/styles</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+</body>
+
+</html>

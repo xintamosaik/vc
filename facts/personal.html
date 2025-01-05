@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+
+    <main>
+        <h1>/facts/personal</h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <label for="first">First name</label>
+            <input type="text" name="first" id="first">
+            <label for="last">Last name</label>
+            <input type="text" name="last" id="last">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email">
+            <label for="location">Location</label>
+            <input type="text" name="location" id="location">
+            <br>
+            <button type="submit">Enter</button>
+        </form>
+        <script>
+            (function handleLoad() {
+                const data = JSON.parse(localStorage.getItem('personal'))
+                const formElements = document.forms[0].elements
+                formElements.first.value = data.first
+                formElements.last.value = data.last
+                formElements.email.value = data.email
+                formElements.location.value = data.location
+            })()
+     
+            function handleSubmit(event) {
+                event.preventDefault();
+                const formElements = document.forms[0].elements
+                const data = {
+                    first: formElements.first.value,
+                    last: formElements.last.value,
+                    email: formElements.email.value,
+                    location: formElements.location.value
+                }
+                localStorage.setItem('personal', JSON.stringify(data))
+                flashSuccessMessage('Data saved!')
+            }
+        </script>
+        <br>
+        <nav class="auto-rows">
+            <a href="/facts/">/facts/</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+
+    </script>
+</body>
+
+</html>

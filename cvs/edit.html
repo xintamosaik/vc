@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/cvs/edit</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>/cvs/edit</h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="id" id="id">
+            <nav id="sections" class="auto-rows">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" placeholder="Pick a name for your cv">
+                <br>
+                <div class="section" data-category="personal">
+                    <input type="checkbox" id="personal" name="personal" value="personal" checked>
+                    <a data-section="personal" href="/cvs/personal.html">/cvs/personal</a>
+                </div>
+
+                <div class="section" data-category="summary">
+                    <input type="checkbox" id="summary" name="summary" value="summary" checked>
+                    <a data-section="summary" href="/cvs/summary.html">/cvs/summary</a>
+                </div>
+
+                <div class="section" data-category="educations">
+                    <input type="checkbox" id="educations" name="educations" value="educations" checked>
+                    <a data-section="educations" href="/cvs/education.html">/cvs/education</a>
+                </div>
+
+                <div class="section" data-category="jobs">
+                    <input type="checkbox" id="jobs" name="jobs" value="jobs" checked>
+                    <a data-section="jobs" href="/cvs/jobs.html">/cvs/jobs</a>
+                </div>
+
+                <div class="section" data-category="skills">
+                    <input type="checkbox" id="skills" name="skills" value="skills" checked>
+                    <a data-section="skills" href="/cvs/skills.html">/cvs/skills</a>
+                </div>
+
+
+                <div class="section" data-category="interests">
+                    <input type="checkbox" id="interests" name="interests" value="interests" checked>
+                    <a data-section="interests" href="/cvs/interests.html">/cvs/interests</a>
+                </div>
+
+                <div class="section" data-category="references">
+                    <input type="checkbox" id="references" name="references" value="references" checked>
+                    <a data-section="references" href="/cvs/references.html">/cvs/references</a>
+                </div>
+
+            </nav>
+            <button type="submit">Enter</button>
+        </form>
+        <script>
+            const sections = document.querySelectorAll('nav#sections .section')
+            function getDefaults() {
+                return status = JSON.parse(localStorage.getItem('sections'))
+            }
+
+            function createNew() {
+                const cv = {}
+
+                const defaults = getDefaults()
+                const timestamp = new Date().getTime()
+                cv.created = timestamp;
+                cv.updated = timestamp;
+
+                console.log(sections)
+                sections.forEach(section => {
+                    const category = section.dataset.category
+                    console.log(category)
+                    cv[category] = {
+                        active: defaults[category]
+                    }
+                    console.log(cv[category])
+                })
+                const id = 'cv_' + timestamp
+                localStorage.setItem(id, JSON.stringify(cv))
+                return id
+            }
+
+            (function handleLoad() { // this or the other one is really buggy
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get('id')
+
+                if (!id) {
+                    window.location.replace(window.location.href + '?id=' + createNew())
+                }
+
+                const form = document.forms[0]
+                const formElements = form.elements
+                formElements.id.value = id
+
+                window.sections.querySelectorAll('input + a').forEach(link => {
+                    const category = link.dataset.section
+                    link.href += '?id=' + formElements.id.value
+                })
+
+                const data = JSON.parse(localStorage.getItem(formElements.id.value))
+
+                const sections = document.querySelectorAll('nav#sections .section')
+                sections.forEach(section => {
+                    section.querySelector('input').checked = data[section.dataset.category].active
+                })
+
+                formElements.name.value = data.name || ''
+
+            })()
+
+
+
+            function updateCV() {
+                const formElements = document.forms[0].elements
+                const id = formElements.id.value
+                const data = JSON.parse(localStorage.getItem(id))
+
+                data.updated = new Date().getTime()
+                data.name = formElements.name.value
+
+                sections.forEach(section => {
+                    data[section.dataset.category].active = section.querySelector('input').checked
+                })
+
+                localStorage.setItem(id, JSON.stringify(data))
+
+                flashSuccessMessage('Data saved!')
+            }
+
+            function handleSubmit(event) { // this or the other one is really buggy
+
+                event.preventDefault();
+                updateCV()
+
+            }
+        </script>
+        <br>
+        <nav class="auto-rows">
+            <a href="/cvs/">/cvs</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+</body>
+
+</html>

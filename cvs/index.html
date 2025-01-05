@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cvs</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>/cvs</h1>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/cvs/edit.html">/cvs/new</a>
+        </nav>
+        <hr>
+        <template id="cv">
+            <div class="cv" style="display:flex; flex-direction: column;">
+                <a class="id" href="/cvs/edit.html" style="display: flex;">
+                    <span class="path"></span>
+               
+                    <span class="file"></span>
+                </a>
+                <span class="name"></span>
+                <span class="created"></span>
+                <a class="preview" href="/cvs/preview.html" style="display: flex;"></a>
+                <input type="button" value="Delete" class="delete" onclick="handleDelete(event)">
+                
+                
+            </div>
+        </template>
+        <output id="cvs">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+        const handleDelete = (event) => {
+            const result = confirm('Are you sure you want to delete this cv?')
+            if (!result) return
+            const id = event.target.dataset.id
+            localStorage.removeItem(id)
+            window.location.reload()
+        }
+
+        (function loadcvs() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('cv_17'))
+
+            const template = window.cv
+
+            if (keys.length === 0) {
+                const p = document.createElement('p')
+                p.innerText = 'You did not add any cvs yet.'
+                window.cvs.appendChild(p)
+                return
+            }
+            keys.forEach(key => {
+                const cv = JSON.parse(localStorage.getItem(key))
+                console.log(cv)
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('a.id').href += '?id=' + key
+                clone.querySelector('span.path').innerText = '/cvs/'
+                clone.querySelector('span.file').innerText = key
+                clone.querySelector('span.created').innerText = 'Added ' + timeAgo(cv.created)
+                clone.querySelector('span.name').innerText = `"${cv.name ? cv.name : 'Untitled'}"`
+                clone.querySelector('input.delete').dataset.id = key
+                clone.querySelector('a.preview').href += '?id=' + key
+                clone.querySelector('a.preview').innerText = 'cvs/preview/' + key
+                window.cvs.appendChild(clone)
+                window.cvs.appendChild(document.createElement('br'))
+            })
+        })()
+    </script>
+</body>
+
+</html>

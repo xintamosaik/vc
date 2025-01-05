@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/facts/jobs/edit</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>/facts/jobs/edit</h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="id" id="id">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title">
+            <label for="company">Company</label>
+            <input type="text" name="company" id="company">
+            <label for="from">From</label>
+            <input type="date" name="from" id="from">
+            <label for="to">To</label>
+            <input type="date" name="to" id="to">
+            <label>Achievements</label>
+            <textarea name="achievements" id="achievements" rows="5"></textarea>
+            <label for="active"><input type="checkbox" name="active" id="active"> I currently work there</label>
+            <br>
+            <button type="submit">Enter</button>
+        </form>
+        <script>
+            (function handleLoad() {
+                const params = new URLSearchParams(window.location.search);
+                
+                const id = params.get('id');
+                if (!id) return
+
+                const data = JSON.parse(localStorage.getItem(id))   
+                if (!data) return
+
+                const formElements = document.forms[0].elements
+                formElements.id.value = id
+                formElements.title.value = data.title
+                formElements.company.value = data.company
+                formElements.from.value = data.from
+                formElements.to.value = data.active ? '' : data.to
+                formElements.active.checked = data.active
+                formElements.achievements.value = data.achievements
+            })()
+     
+            function handleSubmit(event) {
+           
+                event.preventDefault();
+                const formElements = document.forms[0].elements
+                
+                const data = {
+                    title: formElements.title.value,
+                    company: formElements.company.value,
+                    from: formElements.from.value,
+                    to: formElements.active.checked ? '' : formElements.to.value,
+                    active: formElements.active.checked,
+                    achievements: formElements.achievements.value
+                }
+   
+                const id = formElements.id.value ? formElements.id.value : 'job_' + new Date().getTime()
+       
+                localStorage.setItem(id, JSON.stringify(data))
+                formElements.id.value = id 
+
+                flashSuccessMessage('Data saved!')
+            }
+        </script>
+        <br>
+        <nav class="auto-rows">
+            <a href="/facts/jobs.html">/facts/jobs/</a>
+            <a href="/facts/">/facts</a>
+            <a href="/">/</a>
+
+        </nav>
+    </main>
+</body>
+
+</html>

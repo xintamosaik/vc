@@ -1,0 +1,93 @@
+:root {
+    --width-content: 500px;
+    --color-primary: hotpink;
+    --color-success: aquamarine;
+    --color-neutral: black;
+    --color-text: black;
+    --color-background: white;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-text: white;
+        --color-background: darkslategrey;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    max-width: var(--width-content);
+    margin: 0 auto;
+    background-color: var(--color-neutral);
+    color: var(--color-text);
+}
+
+main {
+    padding: 20px;
+    background-color: var(--color-background);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+label {
+    font-family: sans-serif;
+    padding: 0.5em 0;
+}
+
+input,
+textarea,
+button {
+    font-family: monospace;
+    padding: 0.5em;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    outline: none;
+
+}
+
+input {
+    border: 1px solid var(--color-primary);
+}
+
+input:focus {
+    border: 1px solid var(--color-text)
+}
+
+
+
+button {
+    border: none;
+    background-color: var(--color-primary)
+}
+
+div.flash {
+    font-family: monospace;
+    background-color: var(--color-success);
+    position: fixed;
+    width: min(100%, var(--width-content));
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    font-family: monospace;
+    color: var(--color-primary);
+}
+
+a:before {
+    content: "→";
+
+}
+
+nav.auto-rows {
+    display: grid;
+    grid-auto-rows: 2rem;
+}

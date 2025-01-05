@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facts</title>
+    <link rel="stylesheet" href="/shared.css">
+</head>
+
+<body>
+    <main>
+        <h1>/facts</h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <nav id="sections" class="auto-rows">
+                <div class="section" data-category="personal">
+                    <input type="checkbox" id="personal" name="personal" value="personal" checked>
+                    <a data-section="personal" href="/facts/personal.html">/facts/personal</a>
+                </div>
+
+                <div class="section" data-category="summary">
+                    <input type="checkbox" id="summary" name="summary" value="summary" checked>
+                    <a data-section="summary" href="/facts/summary.html">/facts/summary</a>
+                </div>
+
+                <div class="section" data-category="jobs">
+                    <input type="checkbox" id="jobs" name="jobs" value="jobs" checked>
+                    <a data-section="jobs" href="/facts/jobs.html">/facts/jobs</a>
+                </div>
+
+                <div class="section" data-category="educations">
+                    <input type="checkbox" id="educations" name="educations" value="educations" checked>
+                    <a data-section="educations" href="/facts/education.html">/facts/education</a>
+                </div>
+
+                <div class="section" data-category="skills">
+                    <input type="checkbox" id="skills" name="skills" value="skills" checked>
+                    <a data-section="skills" href="/facts/skills.html">/facts/skills</a>
+                </div>
+
+                <div class="section" data-category="interests">
+                    <input type="checkbox" id="interests" name="interests" value="interests" checked>
+                    <a data-section="interests" href="/facts/interests.html">/facts/interests</a>
+                </div>
+
+                <div class="section" data-category="references">
+                    <input type="checkbox" id="references" name="references" value="references" checked>
+                    <a data-section="references" href="/facts/references.html">/facts/references</a>
+                </div>
+
+                <a href="/">/</a>
+            </nav>
+        </form>
+
+        <script>
+            const sections = document.querySelectorAll('nav#sections .section')
+          
+            const checkboxes = document.querySelectorAll('nav#sections .section input[type="checkbox"]')
+ 
+            function getStatus () {
+                const status = {}
+                checkboxes.forEach(checkbox => {
+                    status[checkbox.value] = checkbox.checked
+                })
+                return status
+            }
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    localStorage.setItem('sections', JSON.stringify(getStatus()))
+                })
+            })
+
+            function setStatus () {
+                const status = JSON.parse(localStorage.getItem('sections'))
+                if (status) {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = status[checkbox.value]
+                    })
+                }
+            }
+            setStatus()
+        </script>
+    </main>
+</body>
+
+</html>

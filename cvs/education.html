@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>cvs/education</title>
+    <link rel="stylesheet" href="/shared.css">
+</head>
+
+<body>
+    <main>
+        <h1 style="display:flex;">
+            /cvs/education
+        </h1>
+        <hr>
+        <template id="education">
+            <div class="education" style="display:flex; flex-direction: column;">
+                <a class="id" href="/cvs/education/edit.html">
+                    <span class="path"></span>
+                    <br>
+                    <span class="file"></span>
+                </a>
+                <span class="degree"></span>
+                <span class="institution"></span>
+                <span class="timeframe"></span>
+                <button class="reset">Reset</button>
+         
+            </div>
+        </template>
+        <output id="educations">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/cvs/edit.html" class="back">/cvs/edit</a>
+            <a href="/cvs/">/cvs</a>
+            <a href="/"></a>
+        </nav>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/education.html">/facts/education</a>
+       
+        </nav>
+    </main>
+    <script>
+
+        function handleReset() {
+            const result = confirm('Are you sure you want to reset this education?')
+            if (!result) return
+            cv_id = event.target.dataset.id
+            key = event.target.dataset.education
+            console.log(cv_id)
+            console.log(event.target.dataset.education)
+            const cv = JSON.parse(localStorage.getItem(cv_id))
+            if (!cv.hasOwnProperty('education')) return
+            if (!cv.education.hasOwnProperty(key)) return
+            delete cv.education[key]
+            localStorage.setItem(cv_id, JSON.stringify(cv))
+            
+            //window.location.reload()
+             
+        }
+        (function loadeducation() {
+            const search = new URLSearchParams(window.location.search)
+            const cv_id = search.get('id')
+          
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('education_17'))
+            if (keys.length === 0) {
+                const warn = document.createElement('p')
+                warn.innerText = 'Add facts about education first.'
+                window.educations.appendChild(warn)
+                const add = document.createElement('a')
+                add.href = '/facts/education/edit.html'
+                add.innerText = '/facts/education'
+                window.educations.appendChild(add)
+                return
+            }
+
+            const template = window.education
+            keys.forEach(key => {
+                const education = JSON.parse(localStorage.getItem(key))
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('a.id').href += '?id=' + cv_id + '&education=' + key
+                clone.querySelector('span.path').innerText = '/facts/education/ '
+                clone.querySelector('span.file').innerText = cv_id + '_' + key
+                clone.querySelector('span.degree').innerText = education.degree
+                clone.querySelector('span.institution').innerText = education.institution
+                clone.querySelector('span.timeframe').innerText = `${education.from} - ${education.active ? 'Present' : education.to}`
+                clone.querySelector('button.reset').dataset.id = cv_id
+                clone.querySelector('button.reset').dataset.education = key
+                clone.querySelector('button.reset').addEventListener('click', handleReset)
+
+                window.educations.appendChild(clone)
+                window.educations.appendChild(document.createElement('br'))
+            })
+
+            const back = document.querySelector('nav.auto-rows a.back')
+            back.href += '?id=' + cv_id
+            back.innerText = '/cvs/edit/' + cv_id
+
+        })()
+    </script>
+</body>
+
+</html>

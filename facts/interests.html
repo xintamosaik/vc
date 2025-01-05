@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>interests</title>
+    <link rel="stylesheet" href="/shared.css">
+</head>
+
+<body>
+    <main>
+        <h1>/facts/interests</h1>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/interests/edit.html">/facts/interests/new</a>
+        </nav>
+        <hr>
+        <template id="category">
+            <div class="category">
+                <h2 class="category"></h2>
+                <div class="interests">
+
+                </div>
+            </div>
+        </template>
+        <template id="interest">
+            <div class="interest" style="display:flex; flex-direction: column;">
+                <a class="id" href="/facts/interests/edit.html">
+                    <span class="path"></span>
+                    <br>
+                    <span class="file"></span>
+                </a>
+                <span class="name"></span>
+     
+
+                <input type="button" value="Delete" class="delete" onclick="handleDelete(event)">
+            </div>
+        </template>
+        <output id="interests">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/">/facts</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+        const handleDelete = (event) => {
+            const result = confirm('Are you sure you want to delete this interest?')
+            if (!result) return
+            const id = event.target.dataset.id
+            localStorage.removeItem(id)
+            window.location.reload()
+        }
+
+        function addCategory(category) {
+            const template = window.category
+            const clone = template.content.cloneNode(true)
+            clone.querySelector('h2.category').innerText = category
+            clone.querySelector('div.interests').id = category
+            window.interests.appendChild(clone)
+        }
+
+        (function loadinterests() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('interest_17'))
+
+            const template = window.interest
+
+            if (keys.length === 0) {
+                const p = document.createElement('p')
+                p.innerText = 'You did not add any interests yet.'
+                window.interests.appendChild(p)
+                return
+            }
+            categories = []
+            keys.forEach(key => {
+                const interest = JSON.parse(localStorage.getItem(key))
+
+                const category = interest.category ? interest.category : 'uncategorized'
+    
+                if (!categories.includes(category)) {
+
+
+                    categories.push(category)
+                    addCategory(category)
+                }
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('a.id').href += '?id=' + key
+                clone.querySelector('span.path').innerText = '/facts/interests/'
+                clone.querySelector('span.file').innerText = key
+                clone.querySelector('span.name').innerText = interest.interest
+         
+                clone.querySelector('input.delete').dataset.id = key
+
+                window.interests.querySelector('#' + category).appendChild(clone)
+            })
+        })()
+    </script>
+</body>
+
+</html>

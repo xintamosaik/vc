@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/styles</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>/styles</h1>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/styles/edit.html">/style/new</a>
+        </nav>
+        <hr>
+        <template id="style">
+            <div class="style" style="display:flex; flex-direction: column;">
+                <a class="id" href="/styles/edit.html" style="display: flex;">
+                    <span class="path"></span>
+                    <span class="file"></span>
+                </a>
+                <span class="name"></span>
+                <span class="created"></span>
+                <a href="/cvs/preview.html" class="preview" style="display: flex;">
+                    <span class="path"></span>
+                    <span class="file"></span>
+                </a>
+                <input type="button" value="Delete" class="delete" onclick="handleDelete(event)">
+
+            </div>
+        </template>
+        <output id="styles">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+        const template = window.style
+        const handleDelete = (event) => {
+            const result = confirm('Are you sure you want to delete this style?')
+            if (!result) return
+            const id = event.target.dataset.id
+            localStorage.removeItem(id)
+            window.location.reload()
+        }
+
+        function addStyle(style, key) {
+            const clone = template.content.cloneNode(true)
+            clone.querySelector('a.id').href += '?id=' + key
+            clone.querySelector('a.id span.path').innerText = '/styles/'
+            clone.querySelector('a.id span.file').innerText = key
+
+            clone.querySelector('a.preview').href += '?style=' + key
+            clone.querySelector('a.preview span.path').innerText = '/cvs/'
+            clone.querySelector('a.preview span.file').innerText = key
+
+            clone.querySelector('span.name').innerText = `"${style.name ? style.name : 'Untitled'}"`
+            clone.querySelector('span.created').innerText = 'Added ' + timeAgo(style.created)
+
+            // tba
+            clone.querySelector('input.delete').dataset.id = key
+            return clone
+        }
+
+        (function loadstyles() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('style_17'))
+            const defaultKey = 'style_default'
+            const defaultStyle = {
+                name: 'Default',
+                created: new Date().getTime(),
+                layout: { active: true },
+                fonts: { active: true },
+                colors: { active: true },
+                spacing: { active: true },
+                borders: { active: true },
+            }
+            const defaultExists = JSON.parse(localStorage.getItem(defaultKey))
+    
+            if (!defaultExists) {
+                localStorage.setItem(defaultKey, JSON.stringify(defaultStyle))
+            }
+            const defaultClone = addStyle(defaultExists ? defaultExists : defaultStyle, defaultKey)
+            window.styles.appendChild(defaultClone)
+            window.styles.appendChild(document.createElement('br'))
+
+            if (keys.length === 0) {
+                const p = document.createElement('p')
+                p.innerText = 'You did not add any styles yet.'
+                window.styles.appendChild(p)
+                return
+            }
+            keys.forEach(key => {
+                const style = JSON.parse(localStorage.getItem(key))
+           
+                const clone = addStyle(style, key)
+
+                window.styles.appendChild(clone)
+                window.styles.appendChild(document.createElement('br'))
+
+            })
+        })()
+    </script>
+</body>
+
+</html>

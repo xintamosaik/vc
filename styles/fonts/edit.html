@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>/styles/fonts/edit</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+
+</head>
+
+<body>
+    <main>
+        <h1>/styles/fonts/edit</h1>
+        <hr>
+
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+
+
+            <input type="hidden" name="id" id="id">
+
+            <template id="font" >
+                <details class="section" data-element="x" style="cursor: pointer; font-family: sans-serif;">
+                    <summary style="cursor: pointer; font-family: sans-serif; background-color: var(--color-primary); color: var(--color-secondary);  padding: 0.5em;">x</summary>
+                    <div style="display:flex; flex-direction: column; ">
+                        <label for="x-font-family">Font Family</label>
+                        <input type="text" id="x-font-family" class="font-family" name="x-font-family" placeholder="Font Family">
+                        <label for="x-font-size">Font Size</label>
+                        <input type="text" id="x-font-size" class="font-size" name="x-font-size" placeholder="Font Size">
+                        <label for="x-font-weight">Font Weight</label>
+                        <input type="text" id="x-font-weight" class="font-weight" name="x-font-weight" placeholder="Font Weight">
+                        <label for="x-line-height">Line Height</label>
+                        <input type="text" id="x-line-height" class="line-height" name="x-line-height" placeholder="Line Height">
+                    </div>
+
+                </details>
+            </template>
+
+            <output id="fonts"></output>
+
+
+
+            <button type="submit">Enter</button>
+        </form>
+
+        <br>
+        <nav class="auto-rows">
+            <a href="/styles/edit.html" class="back">/styles/</a>
+            <a href="/styles/">/styles</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+
+    <script>
+   
+        const form = document.forms[0];
+       
+     
+
+
+        form.addEventListener('click', function (event) {
+            const target = event.target;
+            console.log(target);
+
+        });
+
+        function handleLoad() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (!id) return;
+
+            const formElements = form.elements;
+            formElements.id.value = id;
+
+            const elements = [ 'h1', 'h2', 'h3', 'p']
+            
+            const data = JSON.parse(localStorage.getItem(id));
+            if (!data) return;
+
+            const { fonts } = data;
+            console.log(fonts);
+           
+            const fontTemplate = window.font
+            console.log(fontTemplate);
+            elements.forEach(element=> {
+                const  fontClone = fontTemplate.content.cloneNode(true);
+              
+                const summary = fontClone.querySelector('summary');
+                summary.textContent = element;
+
+                const details = fontClone.querySelector('details');
+                details.dataset.element = element;
+
+                const fontFamily = fontClone.querySelector('input.font-family');
+                fontFamily.name = `${element}-font-family`;
+                fontFamily.placeholder = `${element} Font Family`;
+                fontFamily.value = fonts[`${element}-font-family`];
+
+                const fontSize = fontClone.querySelector('input.font-size');
+                fontSize.name = `${element}-font-size`;
+                fontSize.placeholder = `${element} Font Size`;
+                fontSize.value = fonts[`${element}-font-size`];
+
+                const fontWeight = fontClone.querySelector('input.font-weight');
+                fontWeight.name = `${element}-font-weight`;
+                fontWeight.placeholder = `${element} Font Weight`;
+                fontWeight.value = fonts[`${element}-font-weight`];
+
+                const lineHeight = fontClone.querySelector('input.line-height');
+                lineHeight.name = `${element}-line-height`;
+                lineHeight.placeholder = `${element} Line Height`;
+                lineHeight.value = fonts[`${element}-line-height`];
+
+                window.fonts.appendChild(fontClone);
+                window.fonts.appendChild(document.createElement('br'));
+            })
+
+
+       
+    
+            const back = document.querySelector('nav .back');
+            back.href = `/styles/edit.html?id=${id}`;
+            back.textContent = `/styles/${id}`;
+        }
+
+        // -----------------------------
+        //  FORM SUBMIT (SAVE LOGIC)
+        // -----------------------------
+        function handleSubmit(event) {
+            event.preventDefault();
+            const formElements = form.elements;
+            const id = formElements.id.value // if we land here without id, it's a bug, so we don't need to generate one
+
+            const style = JSON.parse(localStorage.getItem(id));
+            console.log(style);
+            const fonts = Object.fromEntries(new FormData(form));
+            fonts.active = true; // Why doe we need to do this here?
+            console.log(fonts);
+            delete fonts.id // the key is the id already in the style object
+            if (! style.hasOwnProperty('fonts')) style.fonts = {};
+
+            style.fonts = fonts;
+       
+            // const id = formElements.id.value ? formElements.id.value : 'job_' + new Date().getTime();
+            localStorage.setItem(id, JSON.stringify(style));
+
+
+            // Example function to show success
+            flashSuccessMessage('Data saved!');
+        }
+
+        // On page load, create one button per category
+        window.addEventListener('DOMContentLoaded', () => {
+
+            handleLoad();
+        });
+    </script>
+</body>
+
+</html>

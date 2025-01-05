@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>skills</title>
+    <link rel="stylesheet" href="/shared.css">
+</head>
+
+<body>
+    <main>
+        <h1>/facts/skills</h1>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/skills/edit.html">/facts/skills/new</a>
+        </nav>
+        <hr>
+        <template id="category">
+            <div class="category">
+                <h2 class="category"></h2>
+                <div class="skills">
+
+                </div>
+            </div>
+        </template>
+        <template id="skill">
+            <div class="skill" style="display:flex; flex-direction: column;">
+                <a class="id" href="/facts/skills/edit.html">
+                    <span class="path"></span>
+                    <br>
+                    <span class="file"></span>
+                </a>
+                <span class="name"></span>
+                <span class="level"></span>
+
+                <input type="button" value="Delete" class="delete" onclick="handleDelete(event)">
+            </div>
+        </template>
+        <output id="skills">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/">/facts</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+        const handleDelete = (event) => {
+            const result = confirm('Are you sure you want to delete this skill?')
+            if (!result) return
+            const id = event.target.dataset.id
+            localStorage.removeItem(id)
+            window.location.reload()
+        }
+
+        function addCategory(category) {
+            const template = window.category
+            const clone = template.content.cloneNode(true)
+            clone.querySelector('h2.category').innerText = category
+            clone.querySelector('div.skills').id = category
+            window.skills.appendChild(clone)
+        }
+
+        (function loadskills() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('skill_17'))
+
+            const template = window.skill
+
+            if (keys.length === 0) {
+                const p = document.createElement('p')
+                p.innerText = 'You did not add any skills yet.'
+                window.skills.appendChild(p)
+                return
+            }
+            categories = []
+            keys.forEach(key => {
+                const skill = JSON.parse(localStorage.getItem(key))
+
+                const category = skill.category ? skill.category : 'uncategorized'
+         
+                if (!categories.includes(category)) {
+
+
+                    categories.push(category)
+                    addCategory(category)
+                }
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('a.id').href += '?id=' + key
+                clone.querySelector('span.path').innerText = '/facts/skills/'
+                clone.querySelector('span.file').innerText = key
+                clone.querySelector('span.name').innerText = skill.skill
+                clone.querySelector('span.level').innerText = skill.level
+
+                clone.querySelector('input.delete').dataset.id = key
+
+                //window.skills.appendChild(clone)
+
+                window.skills.querySelector('#' + category).appendChild(clone)
+                //window.skills.appendChild(document.createElement('br'))
+            })
+        })()
+    </script>
+</body>
+
+</html>

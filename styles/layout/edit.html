@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>/styles/layout/edit</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+    <style>
+        /* Just some quick styling to see borders and highlights */
+        :root {
+            --radiant-one: var(--color-primary);
+            --radiant-two: var(--color-secondary);
+            --radiant-three: transparent;
+
+        }
+
+        .section {
+            cursor: pointer;
+        }
+
+        form.highlight div.unselected,
+        form.highlight fieldset.layout {
+            /* striped radiant css with repeat */
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, hotpink 10px, hotpink 20px);
+            /* ease in out*/
+            /** ease in out */
+            transition: all 2s ease-in-out 2s;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>/styles/layout/edit</h1>
+        <hr>
+
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+
+
+            <input type="hidden" name="id" id="id">
+
+            <!-- Buttons for adding new columns -->
+            <button type="button" id="addSingle" onclick="addSingleColumn(event)">Add single column</button>
+            <br>
+            <button type="button" id="addDouble" onclick="addDoubleColumn(event)">Add two columns</button>
+
+            <br>
+            <div id="categories" class="layout" data-layout="unselected">
+
+                <label for="personal" class="section">
+                    Personal
+                    <input type="hidden" id="personal" name="personal" value="unselected">
+                </label>
+                <label for="summary" class="section">
+                    Summary
+                    <input type="hidden" id="summary" name="summary" value="unselected">
+                </label>
+                <label for="skills" class="section">
+                    Skills
+                    <input type="hidden" id="skills" name="skills" value="unselected">
+                </label>
+                <label for="jobs" class="section">
+                    Experience
+                    <input type="hidden" id="jobs" name="jobs" value="unselected">
+                </label>
+                <label for="educations" class="section">
+                    Education
+                    <input type="hidden" id="educations" name="educations" value="unselected">
+                </label>
+                <label for="interests" class="section">
+                    Interests
+                    <input type="hidden" id="interests" name="interests" value="unselected">
+                </label>
+                <label for="projects" class="section">
+                    Projects
+                    <input type="hidden" id="projects" name="projects" value="unselected">
+                </label>
+                <label for="references" class="section">
+                    References
+                    <input type="hidden" id="references" name="references" value="unselected">
+                </label>
+                <label for="certifications" class="section">
+                    Certifications
+                    <input type="hidden" id="certifications" name="certifications" value="unselected">
+                </label>
+            </div>
+
+
+            <template id="single">
+                <fieldset class="layout" data-layout="single" data-id>
+                    <legend>single</legend>
+
+                </fieldset>
+            </template>
+
+            <template id="double">
+                <fieldset class="double" data-layout="double">
+                    <legend>double</legend>
+
+                    <fieldset class="layout left" data-id data-layout="left">
+                        <legend>left</legend>
+
+                    </fieldset>
+
+                    <fieldset class="layout right" data-id data-layout="right">
+                        <legend>right</legend>
+
+                    </fieldset>
+
+                </fieldset>
+            </template>
+
+
+            </div>
+            </output>
+
+
+            <button type="submit">Enter</button>
+        </form>
+
+        <br>
+        <nav class="auto-rows">
+            <a href="/styles/edit.html" class="back">/styles/</a>
+            <a href="/styles/">/styles</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+
+    <script>
+        const validClasses = ['left', 'right', 'single', 'unselected'];
+        const form = document.forms[0];
+        let activeSection = null;
+
+        function addColumn(clone) {
+            const lastLayout = form.querySelectorAll('fieldset.layout').item(-1);
+            form.insertBefore(clone, lastLayout);
+
+            const fieldsets = form.querySelectorAll('fieldset.layout');
+            console.log(fieldsets);
+    
+            Object.entries(fieldsets).forEach(([key, fieldset]) => {
+                fieldset.dataset.id = key;
+            });
+        }
+
+        function addSingleColumn() {
+            addColumn(window.single.content.cloneNode(true));
+        }
+
+        function addDoubleColumn() {
+            addColumn(window.double.content.cloneNode(true));
+        }
+
+        function getActiveLayouts() {
+            const queryResult = form.querySelectorAll('fieldset.layout');
+            if (!queryResult) return [];
+
+            const activeFieldsets = (typeof queryResult !== 'NodeList') 
+                ? Array.from(queryResult)
+                : [queryResult];
+
+            const FieldsetsWithInputs = activeFieldsets.filter(f => f.querySelector('input'));
+   
+            return FieldsetsWithInputs.map(f => `${f.dataset.layout}${f.dataset.id}`);
+        }
+
+        form.addEventListener('click', function (event) {
+            const target = event.target;
+            if (target.classList.contains('section')) {
+
+                activeSection = target;
+                this.classList.add('highlight');
+            }
+
+            if (target.classList.contains('layout')) {
+                if (!activeSection) return;
+
+
+                const layoutType = target.dataset.layout;
+
+                if (!validClasses.includes(layoutType)) return;
+
+                if (target.contains(activeSection)) {
+                    const children = Array.from(target.children);
+                    const index = children.indexOf(activeSection);
+                    if (index === 0) return;
+                    target.insertBefore(activeSection, children[index - 1]);
+                } else {
+                    target.appendChild(activeSection);
+                    const input = activeSection.querySelector('input');
+                    input.value = (layoutType === 'unselected') ? 'unselected' : layoutType + target.dataset.id;
+                }
+
+                activeSection = null;
+                this.classList.remove('highlight');
+            }
+        });
+
+        function handleLoad() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (!id) return;
+
+            const data = JSON.parse(localStorage.getItem(id));
+            if (!data) return;
+
+            console.log(data);
+            const { layout } = data;
+
+            const formElements = form.elements;
+            formElements.id.value = id;
+
+            layout.sections.forEach (section => {
+                console.log(section)
+                if( section.includes('single')) {
+                    window.addSingle.click();
+
+                } 
+                if( section.includes('left')) {
+                    window.addDouble.click();
+                }
+            });
+
+            const inputs = form.querySelectorAll('input');
+            Object.values(inputs).forEach(input => {
+                if (input.id === 'id') return;  
+                const layoutID = layout[input.id];
+                const layoutType = validClasses.find(c => layoutID.includes(c));
+                if (!layoutType) return;
+                if (layoutType === 'unselected') return;
+                const layoutCounter = layout[input.id].split(layoutType)[1];
+       
+                const targetFieldset = form.querySelector(`fieldset[data-layout="${layoutType}"][data-id="${layoutCounter}"]`);
+                targetFieldset.appendChild(input.parentElement);
+                input.value = layout[input.id];
+            });
+            
+            const back = document.querySelector('nav .back');
+            back.href = `/styles/edit.html?id=${id}`;
+            back.textContent = `/styles/${id}`;
+        }
+
+        // -----------------------------
+        //  FORM SUBMIT (SAVE LOGIC)
+        // -----------------------------
+        function handleSubmit(event) {
+            event.preventDefault();
+            const formElements = form.elements;
+            const id = formElements.id.value // if we land here without id, it's a bug, so we don't need to generate one
+
+            const style = JSON.parse(localStorage.getItem(id));
+            console.log(style);
+            const layout = Object.fromEntries(new FormData(form));
+            console.log(layout);
+            delete layout.id // the key is the id already in the style object
+            layout.active = style.layout.active
+
+            style.layout = layout;
+            style.layout.sections = getActiveLayouts();
+            // const id = formElements.id.value ? formElements.id.value : 'job_' + new Date().getTime();
+            localStorage.setItem(id, JSON.stringify(style));
+
+
+            // Example function to show success
+            flashSuccessMessage('Data saved!');
+        }
+
+        // On page load, create one button per category
+        window.addEventListener('DOMContentLoaded', () => {
+
+            handleLoad();
+        });
+    </script>
+</body>
+
+</html>

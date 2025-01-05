@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+
+    <main>
+        <h1>
+            <span class="cv">cvID3434343434343434</span><br>    
+            <span>/summary</span>
+
+        </h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="id" id="id">
+            <textarea name="summary" id="summary" rows="20"></textarea>
+            <br>
+            <button type="submit">Enter</button>
+        </form>
+        <script>
+
+            function handleSubmit(event) {
+                event.preventDefault();
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get('id')
+                
+                const cv = JSON.parse(localStorage.getItem(id))
+                console.log(cv)
+                const cvHasSummary = cv && cv.hasOwnProperty('summary')
+                cv.summary = cvHasSummary ? cv.summary : {}
+
+                const formElements = document.forms[0].elements
+                cv.summary.custom = formElements.summary.value
+                
+                const summary = formElements.summary.value
+                if (!summary) {
+                    delete cv.summary.custom
+                }
+
+                const successMessage = summary ? 'Data saved!' : 'Summary deleted!'
+             
+                localStorage.setItem(id, JSON.stringify(cv))
+                flashSuccessMessage(successMessage)
+
+                // go to the same page with the id 
+                setTimeout(() => {
+                    
+                    window.location.reload()
+
+                }, 2000)
+            }
+        </script>
+        <br>
+        <nav class="auto-rows">
+            <a class="back" href="/cvs/edit.html">/cvs/edit</a>
+            <a href="/cvs/">/cvs</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+        (function handleLoad() {
+           
+            const params = new URLSearchParams(window.location.search);
+            const cvID = params.get('id') 
+
+            const cv = JSON.parse(localStorage.getItem(cvID))
+   
+            const cvHasSummary = cv && cv.hasOwnProperty('summary') && cv.summary.hasOwnProperty('custom')
+            console.log(cvHasSummary)
+            const summary = cvHasSummary ? cv.summary.custom : JSON.parse(localStorage.getItem('summary'))
+            console.log(summary)
+            const formElements = document.forms[0].elements
+            formElements.id.value = id
+            formElements.summary.value = summary
+
+            const header = document.querySelector('h1 .cv')
+            header.innerText = '/cvs/' + cvID
+            const back = document.querySelector('nav a.back')
+            back.href += '?id=' + params.get('id')
+            back.innerText += '?id=' + params.get('id') 
+        })()
+    </script>
+</body>
+
+</html>

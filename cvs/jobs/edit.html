@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/cvs/jobs/edit</title>
+    <link rel="stylesheet" href="/shared.css">
+    <script src="/shared.js"></script>
+</head>
+
+<body>
+    <main>
+        <h1>/cvs/jobs/edit</h1>
+        <hr>
+        <form style="display: flex; flex-direction: column;" onsubmit="handleSubmit(event)">
+            <input type="hidden" name="id" id="id">
+            <div>
+            
+                <span id="degree"></span>
+            </div>
+            <div>
+               
+                <span id="institution"></span>
+            </div>
+            <div>
+                <span id="from"></span> - <span id="to"></span>
+            </div>
+            
+            <label for="achievements">Achievements</label>
+            <textarea name="achievements" id="achievements" autofocus></textarea>
+            <br>
+            <button type="submit">Enter</button>
+        </form>
+        <script>
+        
+     
+            function handleSubmit(event) {
+                const params = new URLSearchParams(window.location.search);
+                const cvID = params.get('id')
+                if (!cvID) return
+
+                const cvData = JSON.parse(localStorage.getItem(cvID))
+
+                event.preventDefault();
+                const formElements = document.forms[0].elements
+                
+                const achievements = formElements.achievements.value
+
+                const id = params.get("job")
+                if (!cvData.jobs.hasOwnProperty(id)) cvData.jobs[id] = {}
+                cvData.jobs[id].achievements = achievements
+                localStorage.setItem(cvID, JSON.stringify(cvData))
+                
+
+                flashSuccessMessage('Data saved!')
+                setTimeout(() => {
+                    window.location = '/cvs/jobs/edit.html?id=' + cvID + '&job=' + id
+                }, 2000)
+            }
+        </script>
+        <br>
+        <nav class="auto-rows">
+            <a href="/cvs/jobs.html" class="back">/cvs/jobs/</a>
+            <a href="/cvs/edit.html" class="back">/cvs/edit/</a>
+            <a href="/cvs/">/cvs</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+            (function handleLoad() {
+                const params = new URLSearchParams(window.location.search);
+                
+                const id = params.get('job')
+                if (!id) return
+
+                const cvID = params.get('id')
+                if (!cvID) return
+
+                const data = JSON.parse(localStorage.getItem(id))
+                if (!data) return
+
+                const form = document.forms[0]
+                form.querySelector('#degree').textContent = data.degree
+                form.querySelector('#institution').textContent = data.institution
+                form.querySelector('#from').textContent = data.from
+                form.querySelector('#to').textContent = data.active ? 'now' : data.to
+
+                const cvData = JSON.parse(localStorage.getItem(cvID))
+                if (!cvData) return
+
+                const achievementsSaved = (cvData.hasOwnProperty('jobs') && cvData.jobs.hasOwnProperty(id)) 
+                const cvAchievements = achievementsSaved ? cvData.jobs[id].achievements : null
+                
+                
+
+                const formElements = form.elements
+                formElements.achievements.value = cvAchievements ? cvAchievements : data.achievements
+
+                console.log(data)
+                console.log(cvID)
+                const backLinks = document.querySelectorAll('a.back') 
+                backLinks.forEach(backLink => {
+                    backLink.href += '?id=' + cvID
+                    backLink.textContent += cvID
+                })
+                    
+      
+                
+            })()
+    </script>
+</body>
+
+</html>

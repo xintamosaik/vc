@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" style="max-width: 210mm; margin: 0 auto; box-sizing: border-box; background-color: black;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview</title>
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+            line-height: 1.4;
+            color: #000;
+            /* Ensure text is black for clarity */
+            /* Remove any padding or margins that might cause weird overflow */
+            margin: 0;
+            padding: 1cm;
+        }
+
+        header {
+            display: flex;
+
+        }
+
+        main {
+            margin-top: 3rem;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1,
+        h2 {
+            color: rebeccapurple;
+        }
+        .layout.double {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                /* Force A4 output */
+                margin: 1cm;
+                padding: 0cm;
+            }
+
+            main {
+                margin-top: 0;
+            }
+
+            header {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header
+        style="position: fixed; top: 0; left: 0; right: 0; color: white; background-color: black; height: 3rem; justify-content: space-between; align-items: center; padding: 0 1cm;">
+        <nav id="back" style="display: flex; gap: 1rem;">
+            <a id="styles" class="back" href="/styles">/styles</a>
+            <a id="style" class="back" href="/styles/">/styles/</a>
+            <a id="cvs" class="back" href="/cvs/">/cvs/</a>
+            <a id="cv" class="back" href="/cvs/">/cvs/</a>
+        </nav>
+    </header>
+    <main>
+        <section id="personal">
+            <h1 id="name">
+                <span id="first"></span>
+                <span id="last"></span>
+            </h1>
+            <h2 id="title">Web Developer</h2>
+            <div id="contact" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem">
+                <a id="email" href></a>
+                <span id="city"></span>
+                <span id="phone">tel</span>
+                <span id="linkedin">linkedin</span>
+                <span id="github">github</span>
+                <span id="twitter">twitter</span>
+            </div>
+        </section>
+        <section id="summary">
+            <h2>Summary</h2>
+
+        </section>
+
+        <template id="job">
+            <div>
+                <span class="time"></span>
+                <span class="company" style="font-weight: bold;"></span>
+                <span class="title"></span>
+                <div class="achievements"></div>
+            </div>
+        </template>
+        <section id="jobs">
+            <h2>Work Experience</h2>
+        </section>
+
+        <section id="skills">
+            <h2>Skills</h2>
+        </section>
+
+        <template id="education">
+            <h2>Education</h2>
+            <div>
+                <span class="time"></span>
+                <span class="institution" style="font-weight: bold;"></span>
+                <span class="degree"></span>
+                <div class="achievements"></div>
+            </div>
+        </template>
+        <section id="educations"></section>
+
+        <section id="interests">
+            <h2>Interests</h2>
+        </section>
+
+        <section id="references">
+            <h2>References</h2>
+        </section>
+
+        <section id="certifications">
+            <h2>Certificates</h2>
+        </section>
+
+    </main>
+    <footer></footer>
+    <script src="preview.js"></script>
+
+
+</body>
+
+</html>

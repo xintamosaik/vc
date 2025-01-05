@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Education</title>
+    <link rel="stylesheet" href="/shared.css">
+</head>
+
+<body>
+    <main>
+        <h1>/facts/education</h1>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/education/edit.html">/facts/education/new</a>
+        </nav>
+        <hr>
+        <template id="education">
+            <div class="education" style="display:flex; flex-direction: column;">
+                <a class="id" href="/facts/education/edit.html">
+                    <span class="path"></span>
+                    <br>
+                    <span class="file"></span>
+                </a>
+                <span class="degree"></span>
+                <span class="institution"></span>
+                <span class="timeframe"></span>
+                <input type="button" value="Delete" class="delete" onclick="handleDelete(event)">
+            </div>
+        </template>
+        <output id="educations">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/">/facts</a>
+            <a href="/">/</a>
+        </nav>
+    </main>
+    <script>
+        const handleDelete = (event) => {
+            const result = confirm('Are you sure you want to delete this education?')
+            if (!result) return
+            const id = event.target.dataset.id
+            localStorage.removeItem(id)
+            window.location.reload()
+        }
+
+        (function loadeducation() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('education_17'))
+           
+            const template = window.education
+
+            if (keys.length === 0) {
+                const p = document.createElement('p')
+                p.innerText = 'You did not add any education yet.'
+                window.educations.appendChild(p)
+                return
+            }
+            keys.forEach(key => {
+                const education = JSON.parse(localStorage.getItem(key))
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('a.id').href += '?id=' + key
+                clone.querySelector('span.path').innerText = '/facts/education/ '
+                clone.querySelector('span.file').innerText = key
+                clone.querySelector('span.degree').innerText = education.degree
+                clone.querySelector('span.institution').innerText = education.institution
+                clone.querySelector('span.timeframe').innerText = `${education.from} - ${education.active ? 'Present' : education.to}`
+                clone.querySelector('input.delete').dataset.id = key
+
+                window.educations.appendChild(clone)
+                window.educations.appendChild(document.createElement('br'))
+            })
+        })()
+    </script>
+</body>
+
+</html>

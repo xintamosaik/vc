@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>cvs/job</title>
+    <link rel="stylesheet" href="/shared.css">
+</head>
+
+<body>
+    <main>
+        <h1 style="display:flex;">
+            /cvs/job
+        </h1>
+        <hr>
+        <template id="job">
+            <div class="job" style="display:flex; flex-direction: column;">
+                <a class="id" href="/cvs/jobs/edit.html">
+                    <span class="path"></span>
+                    <br>
+                    <span class="file"></span>
+                </a>
+                <span class="title"></span>
+                <span class="company"></span>
+                <span class="timeframe"></span>
+                <button class="reset">Reset</button>
+         
+            </div>
+        </template>
+        <output id="jobs">
+
+        </output>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/cvs/edit.html" class="back">/cvs/edit</a>
+            <a href="/cvs/">/cvs</a>
+            <a href="/"></a>
+        </nav>
+        <hr>
+        <nav class="auto-rows">
+            <a href="/facts/jobs.html">/facts/jobs</a>
+       
+        </nav>
+    </main>
+    <script>
+
+        function handleReset() {
+            const result = confirm('Are you sure you want to reset this job?')
+            if (!result) return
+            cv_id = event.target.dataset.id
+            key = event.target.dataset.job
+            console.log(cv_id)
+            console.log(event.target.dataset.job)
+            const cv = JSON.parse(localStorage.getItem(cv_id))
+            if (!cv.hasOwnProperty('jobs')) return
+            if (!cv.jobs.hasOwnProperty(key)) return
+            delete cv.jobs[key]
+            localStorage.setItem(cv_id, JSON.stringify(cv))      
+        }
+        
+        (function loadjob() {
+            const search = new URLSearchParams(window.location.search)
+            const cv_id = search.get('id')
+          
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('job_17'))
+            if (keys.length === 0) {
+                const warn = document.createElement('p')
+                warn.innerText = 'Add facts about a job first.'
+                window.jobs.appendChild(warn)
+                const add = document.createElement('a')
+                add.href = '/facts/job/edit.html'
+                add.innerText = '/facts/job'
+                window.jobs.appendChild(add)
+                return
+            }
+
+            const template = window.job
+            keys.forEach(key => {
+                const job = JSON.parse(localStorage.getItem(key))
+                const clone = template.content.cloneNode(true)
+                clone.querySelector('a.id').href += '?id=' + cv_id + '&job=' + key
+                clone.querySelector('span.path').innerText = '/facts/job/ '
+                clone.querySelector('span.file').innerText = cv_id + '_' + key
+                clone.querySelector('span.title').innerText = job.title
+                clone.querySelector('span.company').innerText = job.company
+                clone.querySelector('span.timeframe').innerText = `${job.from} - ${job.active ? 'Present' : job.to}`
+                clone.querySelector('button.reset').dataset.id = cv_id
+                clone.querySelector('button.reset').dataset.job = key
+                clone.querySelector('button.reset').addEventListener('click', handleReset)
+
+                window.jobs.appendChild(clone)
+                window.jobs.appendChild(document.createElement('br'))
+            })
+
+            const back = document.querySelector('nav.auto-rows a.back')
+            back.href += '?id=' + cv_id
+            back.innerText = '/cvs/edit/' + cv_id
+
+        })()
+    </script>
+</body>
+
+</html>
