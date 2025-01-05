@@ -82,9 +82,13 @@ a {
     color: var(--color-primary);
 }
 
-a:before {
+a:before  {
     content: "→";
 
+}
+
+a.dead:before {
+    content: "";
 }
 
 nav.auto-rows {

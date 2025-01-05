@@ -21,7 +21,7 @@
                 <br>
                 <div class="section" data-category="personal">
                     <input type="checkbox" id="personal" name="personal" value="personal" checked>
-                    <a data-section="personal" href="./personal.html">/cvs/personal</a>
+                    <a class="dead" data-section="personal">/cvs/personal</a>
                 </div>
 
                 <div class="section" data-category="summary">
@@ -41,18 +41,18 @@
 
                 <div class="section" data-category="skills">
                     <input type="checkbox" id="skills" name="skills" value="skills" checked>
-                    <a data-section="skills" href="./skills.html">/cvs/skills</a>
+                    <a data-section="skills">/cvs/skills</a>
                 </div>
 
 
                 <div class="section" data-category="interests">
                     <input type="checkbox" id="interests" name="interests" value="interests" checked>
-                    <a data-section="interests" href="./interests.html">/cvs/interests</a>
+                    <a class="dead" data-section="interests" >/cvs/interests</a>
                 </div>
 
                 <div class="section" data-category="references">
                     <input type="checkbox" id="references" name="references" value="references" checked>
-                    <a data-section="references" href="./references.html">/cvs/references</a>
+                    <a class="dead" data-section="references" >/cvs/references</a>
                 </div>
 
             </nav>
@@ -100,6 +100,8 @@
 
                 window.sections.querySelectorAll('input + a').forEach(link => {
                     const category = link.dataset.section
+                    console.log(link.href)
+                    if (link.href === '') return;
                     link.href += '?id=' + formElements.id.value
                 })
 
