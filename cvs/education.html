@@ -83,7 +83,7 @@
                 const education = JSON.parse(localStorage.getItem(key))
                 const clone = template.content.cloneNode(true)
                 clone.querySelector('a.id').href += '?id=' + cv_id + '&education=' + key
-                clone.querySelector('span.path').innerText = '/facts/education/ '
+                clone.querySelector('span.path').innerText = './education/ '
                 clone.querySelector('span.file').innerText = cv_id + '_' + key
                 clone.querySelector('span.degree').innerText = education.degree
                 clone.querySelector('span.institution').innerText = education.institution
