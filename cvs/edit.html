@@ -118,9 +118,8 @@
           console.log(sections);
           sections.forEach((section) => {
             const category = section.dataset.category;
-            console.log(category);
             cv[category] = {
-              active: defaults[category] ?? true,
+              active: defaults ? defaults[category] : true,
             };
             console.log(cv[category]);
           });
@@ -195,4 +194,3 @@
     </main>
   </body>
 </html>
-
