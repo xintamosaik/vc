@@ -1,4 +1,4 @@
-# Very curricool
+# Very curriculum
 
 This project is a browser-based resume builder that allows users to create, customize, and preview professional resumes. It uses localStorage for data persistence and provides tools for editing content, customizing styles, and organizing layouts dynamically.
 
